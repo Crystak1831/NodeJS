@@ -1,4 +1,10 @@
+/*redirect the user back to slash nothing, not leave him on /message
+        将用户重定向回斜线，不让他继续停留在/ message
+        * and to create a new file and store the message the user entered in it
+        * */
+
 const http = require('http');
+//work to the file system
 const fs = require('fs');
 
 const server = http.createServer((req, res) => {
@@ -11,21 +17,25 @@ const server = http.createServer((req, res) => {
         res.write('</html>');
         return res.end();
     }
+
+
+    /*如果url是message的话我们可以刷新到localhost:3000, 而不是像之前那样刷新不回去*/
     if (url === '/message' && method === 'POST') {
-        const body = [];
-        req.on('data', (chunk) => {
-            console.log(chunk);
-            body.push(chunk);
-        });
-        req.on('end', () => {
-            const parsedBody = Buffer.concat(body).toString();
-            const message = parsedBody.split('=')[1];
-            fs.writeFileSync('message.txt', message);
-        });
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
+        /*redirect the user back to slash nothing, not leave him on /message
+        将用户重定向回斜线，不让他继续停留在/ message
+        * and to create a new file and store the message the user entered in it
+        * */
+
+        //write the file
+        fs.writeFileSync('message.txt', 'DUMMY');
+         //302 stands for the redirection
+       res.statusCode = 302;
+
+       //'Location'是browser默认的header，set the location '/' can use the host automatically when we are ready running on.
+       res.setHeader('Location', '/')
         return res.end();
     }
+
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<head><title>My First Page</title><head>');
